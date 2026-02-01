@@ -1,0 +1,42 @@
+# Binaries
+server
+tmp/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Go build cache
+*.test
+*.out
+
+# Air temp files
+tmp/
+.air.toml~
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Swagger auto-generated docs
+internal/docs/*
+
+# Vendor (if not using go mod vendor)
+vendor/
+
+# Docker
+docker-data/
