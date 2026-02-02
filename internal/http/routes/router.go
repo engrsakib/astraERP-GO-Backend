@@ -39,7 +39,7 @@ func NewRouter(db *gorm.DB, rdb *redis.Client) *gin.Engine {
 	v1 := r.Group("/api/v1")
 	{
 	
-		RegisterUserRoutes(v1, db)
+		RegisterUserRoutes(v1, db, rdb)
 		
 		// ভবিষ্যতে নতুন মডিউল আসলে:
 		// RegisterProductRoutes(v1, db)
