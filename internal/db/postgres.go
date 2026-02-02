@@ -1,16 +1,25 @@
 package db
 
 import (
-    "log"
+	"log"
 
-    "gorm.io/driver/postgres"
-    "gorm.io/gorm"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func NewPostgres(dsn string) *gorm.DB {
-    db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-    if err != nil {
-        log.Fatalf("failed to connect postgres: %v", err)
-    }
-    return db
+	
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		
+		PrepareStmt: false, 
+		
+		
+		Logger: logger.Default.LogMode(logger.Info),
+	})
+
+	if err != nil {
+		log.Fatalf("failed to connect postgres: %v", err)
+	}
+	return db
 }
