@@ -23,11 +23,13 @@ func RegisterUserRoutes(rg *gin.RouterGroup, db *gorm.DB, redisClient *redis.Cli
 
     // OTP handler
     otpService := user.NewOTPService(redisClient)
-    authHandler := handlers.NewAuthHandler(otpService)
+    userService := user.NewUserService(db)
+    authHandler := handlers.NewAuthHandler(otpService , userService)
 
     auth := rg.Group("/auth")
     {
         auth.POST("/send-otp", authHandler.SendOTP)
 		auth.POST("/verify-otp", authHandler.VerifyOTP)
+        auth.POST("/register", authHandler.RegisterUser)
     }
 }

@@ -9,11 +9,16 @@ import (
 
 type AuthHandler struct {
     OTPService *user.OTPService
+	UserService *user.UserService
 }
 
-func NewAuthHandler(otpService *user.OTPService) *AuthHandler {
-    return &AuthHandler{OTPService: otpService}
+func NewAuthHandler(otpService *user.OTPService, userService *user.UserService) *AuthHandler {
+    return &AuthHandler{
+        OTPService:  otpService,
+        UserService: userService,
+    }
 }
+
 
 // SendOTP godoc
 // @Summary      Send OTP
@@ -76,4 +81,30 @@ func (h *AuthHandler) VerifyOTP(c *gin.Context) {
         "success": true,
         "token":   token,
     })
+}
+
+
+
+func (h *AuthHandler) RegisterUser(c *gin.Context) {
+    var req struct {
+        Name     string `json:"name"`
+        Email    string `json:"email"`
+        Password string `json:"password"`
+        Confirm  string `json:"confirm"`
+    }
+
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
+        return
+    }
+
+    authHeader := c.GetHeader("Authorization")
+
+    err := h.UserService.RegisterUser(authHeader, req.Name, req.Email, req.Password, req.Confirm)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"success": true, "message": "User registered"})
 }
