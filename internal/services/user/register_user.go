@@ -1,11 +1,14 @@
 package user
 
 import (
-    "errors"
+	"errors"
+	"os"
+	"strconv"
 
-    "github.com/engrsakib/erp-system/internal/models"
-    "github.com/engrsakib/erp-system/internal/utils"
-    "gorm.io/gorm"
+	"github.com/engrsakib/erp-system/internal/models"
+	"github.com/engrsakib/erp-system/internal/utils"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type UserService struct {
@@ -35,12 +38,39 @@ func (service *UserService) RegisterUser(authHeader, name, email, password, conf
         return errors.New("passwords do not match")
     }
 
+    // 🔐 Password Hashing with ENV-based cost
+    costStr := os.Getenv("BCRYPT_COST")
+    cost, _ := strconv.Atoi(costStr)
+    if cost < 10 {
+        cost = bcrypt.DefaultCost
+    }
+
+    hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), cost)
+    if err != nil {
+        return errors.New("failed to hash password")
+    }
+
+    hashed := string(hashedBytes)
+
     user := models.User{
         Name:     name,
         Email:    email,
         Mobile:   mobile,
-        Password: password, // hashing later
+        Password: hashed,
     }
 
     return service.DB.Create(&user).Error
 }
+
+
+
+func hashPassword(password string) (string, error) {
+    bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    return string(bytes), err
+}
+
+
+// func checkPasswordHash(password, hash string) bool {
+//     err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+//     return err == nil
+// }
