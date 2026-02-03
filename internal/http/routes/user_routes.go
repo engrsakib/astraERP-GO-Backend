@@ -28,5 +28,6 @@ func RegisterUserRoutes(rg *gin.RouterGroup, db *gorm.DB, redisClient *redis.Cli
     auth := rg.Group("/auth")
     {
         auth.POST("/send-otp", authHandler.SendOTP)
+		auth.POST("/verify-otp", authHandler.VerifyOTP)
     }
 }

@@ -27,8 +27,6 @@ func (s *OTPService) GenerateOTP() string {
 
 func (service *OTPService) SendOTP(mobile string) error {
     otp := service.GenerateOTP()
-
-    // Redis key format
     key := "OTP:" + mobile
 
     // TTL from env
@@ -38,14 +36,16 @@ func (service *OTPService) SendOTP(mobile string) error {
         expMin = 2
     }
 
-    // Store OTP in Redis
+    
     err = service.Redis.Set(context.Background(), key, otp, time.Duration(expMin)*time.Minute).Err()
     if err != nil {
         return fmt.Errorf("failed to store OTP: %v", err)
     }
 
-    // Send SMS with only OTP digits
-	fmt.Println("otp", otp)
-	
+    // realValueInRedis, _ := service.Redis.Get(context.Background(), key).Result()
+    // // fmt.Printf("✅ SUCCESS: Redis এ ডাটা আছে! Key: %s | Real Value: %s\n", key, realValueInRedis)
+
+    // Send SMS
+    fmt.Println("otp sent:", otp)
     return utils.SendSMS(otp, []string{mobile})
 }
