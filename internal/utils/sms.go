@@ -57,6 +57,8 @@ import (
 )
 
 func SendSMS(message string, mobileArray []string) error {
+
+	fmt.Println("sms go", message, "mobile", mobileArray)
     apiKey := os.Getenv("SMS_API_KEY")
     senderID := os.Getenv("SMS_SENDER_ID")
     apiURL := os.Getenv("SMS_API_URL")
