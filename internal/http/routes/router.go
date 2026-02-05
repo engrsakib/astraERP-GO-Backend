@@ -35,7 +35,7 @@ func NewRouter(db *gorm.DB, rdb *redis.Client) *gin.Engine {
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	// ৪. API Versioning Group (এটাই আপনার চাওয়া)
+	
 	v1 := r.Group("/api/v1")
 	{
 	

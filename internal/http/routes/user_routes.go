@@ -6,6 +6,7 @@ import (
     "github.com/gin-gonic/gin"
     "gorm.io/gorm"
     "github.com/redis/go-redis/v9"
+    "github.com/engrsakib/erp-system/internal/repository/login"
 )
 
 func RegisterUserRoutes(rg *gin.RouterGroup, db *gorm.DB, redisClient *redis.Client) {
@@ -21,15 +22,23 @@ func RegisterUserRoutes(rg *gin.RouterGroup, db *gorm.DB, redisClient *redis.Cli
         users.DELETE("/:id", userHandler.DeleteUser)
     }
 
+   
+  
+
     // OTP handler
     otpService := user.NewOTPService(redisClient)
     userService := user.NewUserService(db)
-    authHandler := handlers.NewAuthHandler(otpService , userService)
+    
+    loginRepo := login.NewLoginRepository(db)
+    loginService := user.NewLoginService(loginRepo)
+    
+    authHandler := handlers.NewAuthHandler(otpService , userService, loginService)
 
     auth := rg.Group("/auth")
     {
         auth.POST("/send-otp", authHandler.SendOTP)
 		auth.POST("/verify-otp", authHandler.VerifyOTP)
         auth.POST("/register", authHandler.RegisterUser)
+        auth.POST("/login", authHandler.Login)
     }
 }

@@ -1,21 +1,24 @@
 package handlers
 
 import (
-    "net/http"
+	"net/http"
 
-    "github.com/gin-gonic/gin"
-    "github.com/engrsakib/erp-system/internal/services/user"
+	"github.com/engrsakib/erp-system/internal/dto/user/login"
+	"github.com/engrsakib/erp-system/internal/services/user"
+	"github.com/gin-gonic/gin"
 )
 
 type AuthHandler struct {
     OTPService *user.OTPService
 	UserService *user.UserService
+    LoginService *user.LoginService
 }
 
-func NewAuthHandler(otpService *user.OTPService, userService *user.UserService) *AuthHandler {
+func NewAuthHandler(otpService *user.OTPService, userService *user.UserService, loginService *user.LoginService) *AuthHandler {
     return &AuthHandler{
         OTPService:  otpService,
         UserService: userService,
+        LoginService: loginService,
     }
 }
 
@@ -84,7 +87,17 @@ func (h *AuthHandler) VerifyOTP(c *gin.Context) {
 }
 
 
-
+// RegisterUser godoc 
+// @Summary Register new user 
+// @Description Register a new user using temporary JWT token from OTP verification 
+// @Tags auth 
+// @Accept json 
+// @Produce json 
+// @Param Authorization header string true "Temporary JWT Token" 
+// @Param body body struct{Name string; Email string; Password string; Confirm string} true "User registration data" 
+// @Success 200 {object} map[string]interface{} "User registered successfully" 
+// @Failure 400 {object} map[string]string "Invalid input or token" 
+// @Router /auth/register [post]
 func (h *AuthHandler) RegisterUser(c *gin.Context) {
     var req struct {
         Name     string `json:"name"`
@@ -107,4 +120,38 @@ func (h *AuthHandler) RegisterUser(c *gin.Context) {
     }
 
     c.JSON(http.StatusOK, gin.H{"success": true, "message": "User registered"})
+}
+
+
+
+
+// Login godoc 
+// @Summary Login user 
+// @Description Login using mobile & password and receive access + refresh tokens 
+// @Tags auth 
+// @Accept json 
+// @Produce json 
+// @Param body body login.UserLoginRequest true "Login credentials" 
+// @Success 200 {object} map[string]interface{} "Login successful" 
+// @Failure 400 {object} map[string]string "Invalid input" 
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Router /auth/login [post]
+func (h *AuthHandler) Login(c *gin.Context) {
+    var req login.UserLoginRequest
+
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(400, gin.H{"error": err.Error()})
+        return
+    }
+
+    result, err := h.LoginService.Login(req)
+    if err != nil {
+        c.JSON(401, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(200, gin.H{
+        "success": true,
+        "data":    result,
+    })
 }
