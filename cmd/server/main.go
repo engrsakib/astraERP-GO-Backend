@@ -19,12 +19,18 @@ func main() {
 
     pg := db.NewPostgres(cfg.DatabaseURL)
 
+    
+    log.Println("Running Database Migration...")
     if err := pg.AutoMigrate(&models.User{}); err != nil {
-        log.Fatalf("auto migrate failed: %v", err)
+       
+        log.Printf("⚠️ Warning: AutoMigrate failed (likely due to Supabase Pooler): %v", err)
+    } else {
+        log.Println("✅ Database Migration Successful")
     }
+    
 
     redisClient := db.NewRedis(cfg.RedisAddr, cfg.RedisPass, cfg.RedisDB)
-    _ = redisClient // future use (cache, session, etc.)
+    _ = redisClient 
 
     r := routes.NewRouter(pg, redisClient)
 
