@@ -42,11 +42,17 @@ func (s *LoginService) Login(req dto.UserLoginRequest) (*LoginResponse, error) {
         return nil, errors.New("invalid mobile or password")
     }
 
+	userPhoto := user.Photo
+    if userPhoto == "" {
+        userPhoto = "https://static.vecteezy.com/system/resources/previews/024/766/959/non_2x/default-female-avatar-profile-icon-social-media-chatting-online-user-free-vector.jpg"
+    }
+
     payload := map[string]interface{}{
+		"user_type": user.UserType,
         "id":     user.ID,
         "name":   user.Name,
         "mobile": user.Mobile,
-        "photo":  user.Photo,
+        "photo":  userPhoto,
     }
 
     accessToken, err := utils.GenerateToken(payload, "ACCESS_TOKEN_EXP")
@@ -63,10 +69,11 @@ func (s *LoginService) Login(req dto.UserLoginRequest) (*LoginResponse, error) {
    
     return &LoginResponse{
         User: map[string]interface{}{
+		"user_type": user.UserType,
             "id":     user.ID,
             "name":   user.Name,
             "mobile": user.Mobile,
-            "photo":  user.Photo,
+            "photo":  userPhoto,
         },
         AccessToken:  accessToken,
         RefreshToken: refreshToken,
