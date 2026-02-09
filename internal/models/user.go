@@ -20,7 +20,7 @@ type User struct {
     
     UserType int8 `gorm:"type:smallint;default:3;not null" json:"user_type"` 
 
-    Permissions []UserPermission `gorm:"foreignKey:UserID" json:"permissions"`
+   Permissions []UserPermission `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"permissions"`
     
     CreatedAt time.Time `json:"created_at"`
     UpdatedAt time.Time `json:"updated_at"`
