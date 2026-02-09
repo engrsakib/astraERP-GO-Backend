@@ -1,45 +1,69 @@
 package routes
 
 import (
-	"github.com/engrsakib/erp-system/internal/http/handlers"
-	"github.com/engrsakib/erp-system/internal/http/middlewares"
-	"github.com/engrsakib/erp-system/internal/repository/login"
-	"github.com/engrsakib/erp-system/internal/services/user"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
+
+	
+	userHandlers "github.com/engrsakib/erp-system/internal/http/handlers/user"
+	"github.com/engrsakib/erp-system/internal/http/middlewares"
+	"github.com/engrsakib/erp-system/internal/repository/login"
+	userRepo "github.com/engrsakib/erp-system/internal/repository/user" 
+	userService "github.com/engrsakib/erp-system/internal/services/user" 
 )
 
 func RegisterUserRoutes(rg *gin.RouterGroup, db *gorm.DB, redisClient *redis.Client) {
-    // User CRUD handler
-    userHandler := handlers.NewUserHandler(db)
 
-    users := rg.Group("/users")
-    {
-        users.POST("", userHandler.CreateUser)
-        users.GET("", userHandler.GetUsers)
-        users.GET("/:id", userHandler.GetUser)
-        users.PUT("/:id", userHandler.UpdateUser)
-        users.DELETE("/:id", userHandler.DeleteUser)
-    }
+	
+	uRepo := userRepo.NewUserRepository(db)
+	lRepo := login.NewLoginRepository(db)
 
-   
-  
+	uService := userService.NewUserService(db, uRepo) 
+	lService := userService.NewLoginService(lRepo, redisClient)
+	otpService := userService.NewOTPService(redisClient)
 
-    // OTP handler
-    otpService := user.NewOTPService(redisClient)
-    userService := user.NewUserService(db)
-    
-    loginRepo := login.NewLoginRepository(db)
-    loginService := user.NewLoginService(loginRepo, redisClient)
+	
+	userHandler := userHandlers.NewUserHandler(db, uService)
 
-    authHandler := handlers.NewAuthHandler(otpService , userService, loginService)
+	authHandler := userHandlers.NewAuthHandler(otpService, uService, lService)
 
-    auth := rg.Group("/auth")
-    {
-        auth.POST("/send-otp", authHandler.SendOTP)
+
+	users := rg.Group("/users")
+	
+	
+	users.Use(middlewares.JWTAuth()) 
+	{
+		// ➤ Create User (Permission: user.create)
+		users.POST("", middlewares.CheckPermission(db, "user.create"), userHandler.CreateUser)
+
+		// ➤ Get All Users (Permission: user.view)
+		users.GET("/", 
+			middlewares.CheckPermission(db, "user.view"), 
+			userHandler.GetUsers,
+		)
+
+		// ➤ Get Single User (Permission: user.view)
+		users.GET("/:id", middlewares.CheckPermission(db, "user.view"), userHandler.GetUser)
+
+		// ➤ Update User (Permission: user.update)
+		users.PUT("/:id", middlewares.CheckPermission(db, "user.update"), userHandler.UpdateUser)
+
+		// ➤ Delete User (Permission: user.delete)
+		users.DELETE("/:id", middlewares.CheckPermission(db, "user.delete"), userHandler.DeleteUser)
+	}
+
+	// ==========================================
+	// ৩. Authentication Routes
+	// ==========================================
+	auth := rg.Group("/auth")
+	{
+		auth.POST("/send-otp", authHandler.SendOTP)
 		auth.POST("/verify-otp", authHandler.VerifyOTP)
-        auth.POST("/register", authHandler.RegisterUser)
-        auth.POST("/login",middlewares.RateLimiter(redisClient), authHandler.Login)
-    }
+		auth.POST("/register", authHandler.RegisterUser)
+		
+		
+		auth.POST("/login", middlewares.RateLimiter(redisClient), authHandler.Login)
+		auth.POST("/refresh-token", authHandler.RefreshToken)
+	}
 }

@@ -64,6 +64,7 @@ func (s *LoginService) Login(req dto.UserLoginRequest) (*LoginResponse, error) {
 		"name":   user.Name,
 		"mobile": user.Mobile,
 		"photo":  user.Photo,
+		"user_type": user.UserType,
 	}
 
 	accessToken, err := utils.GenerateToken(payload, "ACCESS_TOKEN_EXP")
