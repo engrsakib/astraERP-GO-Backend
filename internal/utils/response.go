@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// APIResponse: সব রেসপন্সের সাধারণ স্ট্রাকচার
 type APIResponse struct {
 	Success bool        `json:"success"`
 	Message string      `json:"message"`
