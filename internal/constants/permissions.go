@@ -29,6 +29,9 @@ const (
 	// ➤ Settings
 	SettingsView PermissionSlug = "settings.view"
 	SettingsEdit PermissionSlug = "settings.edit"
+
+	//  ➤ Permission Management
+	PermissionAssign PermissionSlug = "permission.assign"
 )
 
 
@@ -61,4 +64,7 @@ var AllPermissions = []struct {
 	
 	{Name: "View Settings", Slug: SettingsView},
 	{Name: "Edit Settings", Slug: SettingsEdit},
+
+	
+	{Name: "Assign Permissions", Slug: PermissionAssign},
 }

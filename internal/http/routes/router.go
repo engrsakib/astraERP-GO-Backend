@@ -40,9 +40,8 @@ func NewRouter(db *gorm.DB, rdb *redis.Client) *gin.Engine {
 	{
 	
 		RegisterUserRoutes(v1, db, rdb)
+		RegisterPermissionRoutes(v1, db)
 		
-		// ভবিষ্যতে নতুন মডিউল আসলে:
-		// RegisterProductRoutes(v1, db)
 	}
 
 	return r

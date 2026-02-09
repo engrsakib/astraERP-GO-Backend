@@ -6,7 +6,7 @@ import (
     "github.com/engrsakib/erp-system/internal/config"
     "github.com/engrsakib/erp-system/internal/db"
     "github.com/engrsakib/erp-system/internal/http/routes"
-    "github.com/engrsakib/erp-system/internal/models"
+    
 )
 
 // @title           ERP System API
@@ -21,10 +21,10 @@ func main() {
 
     
     log.Println("Running Database Migration...")
-    if err := pg.AutoMigrate(&models.User{}); err != nil {
-       
-        log.Printf("⚠️ Warning: AutoMigrate failed (likely due to Supabase Pooler): %v", err)
-    } else {
+    
+    if err := db.Migrate(pg); err != nil {
+		log.Fatal("Failed to migrate database:", err)
+	}else {
         log.Println("✅ Database Migration Successful")
     }
     

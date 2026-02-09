@@ -9,14 +9,16 @@ import (
 	"github.com/engrsakib/erp-system/internal/utils"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+    userRepo "github.com/engrsakib/erp-system/internal/repository/user"
 )
 
 type UserService struct {
     DB *gorm.DB
+    Repo        *userRepo.UserRepository
 }
 
-func NewUserService(db *gorm.DB) *UserService {
-    return &UserService{DB: db}
+func NewUserService(db *gorm.DB, repo *userRepo.UserRepository) *UserService {
+    return &UserService{DB: db, Repo: repo}
 }
 
 func (service *UserService) RegisterUser(authHeader, name, email, password, confirm string) error {
