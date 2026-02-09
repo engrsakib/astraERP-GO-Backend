@@ -51,26 +51,28 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 
 
 // GetUser godoc
-// @Summary      Get user by ID
-// @Tags         users
+// @Summary      Get User by ID with Permissions
+// @Description  Get detailed user info including permissions
+// @Tags         User
 // @Produce      json
 // @Param        id   path      int  true  "User ID"
-// @Success      200  {object}  models.User
-// @Router       /users/{id} [get]
+// @Success      200  {object}  utils.APIResponse{data=dto.UserResponse}
+// @Failure      404  {object}  utils.APIResponse
+// @Router       /api/v1/users/{id} [get]
 func (h *UserHandler) GetUser(c *gin.Context) {
-    id := c.Param("id")
+	// ১. ইউআরএল থেকে আইডি নেওয়া
+	id := c.Param("id")
 
-    var user models.User
-    if err := h.DB.First(&user, id).Error; err != nil {
-        if err == gorm.ErrRecordNotFound {
-            c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
-            return
-        }
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch user"})
-        return
-    }
+	userResponse, err := h.UserService.GetUser(id)
+	
+	if err != nil {
+		
+		utils.SendError(c, http.StatusNotFound, "User not found", err)
+		return
+	}
 
-    c.JSON(http.StatusOK, user)
+
+	utils.SendResponse(c, http.StatusOK, "User retrieved successfully", userResponse, nil)
 }
 
 // UpdateUser godoc
