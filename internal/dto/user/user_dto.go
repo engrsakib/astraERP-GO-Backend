@@ -28,3 +28,11 @@ type PaginationMeta struct {
 	TotalItems  int64 `json:"total_items"`
 	Limit       int   `json:"limit"`
 }
+
+
+type UpdateUserRequest struct {
+	Name     string `json:"name" binding:"required"`
+	Email    string `json:"email" binding:"email"` 
+	UserType int8   `json:"user_type"`            
+	Photo    string `json:"photo"`
+}

@@ -60,7 +60,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 // @Failure      404  {object}  utils.APIResponse
 // @Router       /api/v1/users/{id} [get]
 func (h *UserHandler) GetUser(c *gin.Context) {
-	// ১. ইউআরএল থেকে আইডি নেওয়া
+	
 	id := c.Param("id")
 
 	userResponse, err := h.UserService.GetUser(id)
@@ -76,62 +76,55 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 }
 
 // UpdateUser godoc
-// @Summary      Update user
-// @Tags         users
+// @Summary      Update user info (Mobile cannot be updated)
+// @Tags         User
 // @Accept       json
 // @Produce      json
-// @Param        id    path      int         true  "User ID"
-// @Param        body  body      models.User true  "User payload"
-// @Success      200   {object}  models.User
-// @Router       /users/{id} [put]
+// @Param        id    path      int                    true  "User ID"
+// @Param        body  body      dto.UpdateUserRequest  true  "User payload"
+// @Success      200   {object}  utils.APIResponse{data=dto.UserResponse}
+// @Router       /api/v1/users/{id} [put]
 func (h *UserHandler) UpdateUser(c *gin.Context) {
     id := c.Param("id")
+    var req dto.UpdateUserRequest
 
-    var user models.User
-    if err := h.DB.First(&user, id).Error; err != nil {
-        if err == gorm.ErrRecordNotFound {
-            c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
-            return
-        }
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch user"})
+    
+    if err := c.ShouldBindJSON(&req); err != nil {
+        utils.SendError(c, http.StatusBadRequest, "Invalid request body", err)
         return
     }
 
-    var input models.User
-    if err := c.ShouldBindJSON(&input); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+    
+    updatedUser, err := h.UserService.UpdateUser(id, req)
+    if err != nil {
+        utils.SendError(c, http.StatusInternalServerError, "Failed to update user", err)
         return
     }
 
-    user.Name = input.Name
-    user.Email = input.Email
-
-    if err := h.DB.Save(&user).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update user"})
-        return
-    }
-
-    c.JSON(http.StatusOK, user)
+    
+    utils.SendResponse(c, http.StatusOK, "User updated successfully", updatedUser, nil)
 }
 
 // DeleteUser godoc
 // @Summary      Delete user
-// @Tags         users
+// @Description  Deletes a user and cascades delete to permissions
+// @Tags         User
 // @Produce      json
 // @Param        id   path      int  true  "User ID"
-// @Success      204  {string}  string "No Content"
-// @Router       /users/{id} [delete]
+// @Success      200  {object}  utils.APIResponse
+// @Router       /api/v1/users/{id} [delete]
 func (h *UserHandler) DeleteUser(c *gin.Context) {
     id := c.Param("id")
 
-    if err := h.DB.Delete(&models.User{}, id).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete user"})
+
+    if err := h.UserService.DeleteUser(id); err != nil {
+        utils.SendError(c, http.StatusInternalServerError, "Failed to delete user", err)
         return
     }
 
-    c.Status(http.StatusNoContent)
+    
+    utils.SendResponse(c, http.StatusOK, "User deleted successfully", nil, nil)
 }
-
 
 
 // GetUsers godoc
@@ -148,23 +141,23 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 func (h *UserHandler) GetUsers(c *gin.Context) {
 	var query dto.PaginationQuery
 
-	// ১. কুয়েরি বাইন্ডিং (page, limit, search)
+	
 	if err := c.ShouldBindQuery(&query); err != nil {
 		utils.SendError(c, http.StatusBadRequest, "Invalid query parameters", err)
 		return
 	}
 
-	// ২. ডিফল্ট ভ্যালু চেক
+	
 	if query.Page <= 0 { query.Page = 1 }
 	if query.Limit <= 0 { query.Limit = 10 }
 
-	// ৩. সার্ভিস কল
+	
 	users, meta, err := h.UserService.GetUsers(query)
 	if err != nil {
 		utils.SendError(c, http.StatusInternalServerError, "Failed to fetch users", err)
 		return
 	}
 
-	// ৪. স্ট্যান্ডার্ড রেসপন্স
+	
 	utils.SendResponse(c, http.StatusOK, "Users retrieved successfully", users, meta)
 }

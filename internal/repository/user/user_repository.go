@@ -57,3 +57,16 @@ func (r *UserRepository) GetUserByID(id string) (*models.User, error) {
 	
 	return &user, nil
 }
+
+
+
+// UpdateUser
+func (r *UserRepository) UpdateUser(user *models.User) error {
+    return r.DB.Save(user).Error
+}
+
+// DeleteUser: 
+// note: For permanent delete, use Unscoped().Delete() instead of Delete() to bypass soft delete
+func (r *UserRepository) DeleteUser(id string) error {
+    return r.DB.Unscoped().Delete(&models.User{}, "id = ?", id).Error
+}
