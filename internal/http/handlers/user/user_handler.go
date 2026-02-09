@@ -1,20 +1,24 @@
 package user
 
 import (
-    "net/http"
+	"net/http"
 
-    "github.com/gin-gonic/gin"
-    "gorm.io/gorm"
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 
-    "github.com/engrsakib/erp-system/internal/models"
+	"github.com/engrsakib/erp-system/internal/models"
+	"github.com/engrsakib/erp-system/internal/utils"
+    dto "github.com/engrsakib/erp-system/internal/dto/user"
+    userService "github.com/engrsakib/erp-system/internal/services/user"
 )
 
 type UserHandler struct {
     DB *gorm.DB
+    UserService *userService.UserService
 }
 
-func NewUserHandler(db *gorm.DB) *UserHandler {
-    return &UserHandler{DB: db}
+func NewUserHandler(db *gorm.DB, userService *userService.UserService) *UserHandler {
+    return &UserHandler{DB: db, UserService: userService}
 }
 
 // CreateUser godoc
@@ -45,20 +49,6 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
     c.JSON(http.StatusCreated, user)
 }
 
-// GetUsers godoc
-// @Summary      List users
-// @Tags         users
-// @Produce      json
-// @Success      200 {array} models.User
-// @Router       /users [get]
-func (h *UserHandler) GetUsers(c *gin.Context) {
-    var users []models.User
-    if err := h.DB.Find(&users).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch users"})
-        return
-    }
-    c.JSON(http.StatusOK, users)
-}
 
 // GetUser godoc
 // @Summary      Get user by ID
@@ -138,4 +128,41 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
     }
 
     c.Status(http.StatusNoContent)
+}
+
+
+
+// GetUsers godoc
+// @Summary      Get All Users
+// @Description  Get users list with pagination & search
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param        page   query     int     false  "Page No"
+// @Param        limit  query     int     false  "Limit"
+// @Param        search query     string  false  "Search Keyword"
+// @Success      200  {object}  utils.APIResponse
+// @Router       /api/v1/users [get]
+func (h *UserHandler) GetUsers(c *gin.Context) {
+	var query dto.PaginationQuery
+
+	// ১. কুয়েরি বাইন্ডিং (page, limit, search)
+	if err := c.ShouldBindQuery(&query); err != nil {
+		utils.SendError(c, http.StatusBadRequest, "Invalid query parameters", err)
+		return
+	}
+
+	// ২. ডিফল্ট ভ্যালু চেক
+	if query.Page <= 0 { query.Page = 1 }
+	if query.Limit <= 0 { query.Limit = 10 }
+
+	// ৩. সার্ভিস কল
+	users, meta, err := h.UserService.GetUsers(query)
+	if err != nil {
+		utils.SendError(c, http.StatusInternalServerError, "Failed to fetch users", err)
+		return
+	}
+
+	// ৪. স্ট্যান্ডার্ড রেসপন্স
+	utils.SendResponse(c, http.StatusOK, "Users retrieved successfully", users, meta)
 }

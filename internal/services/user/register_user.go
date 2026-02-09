@@ -17,8 +17,8 @@ type UserService struct {
     Repo        *userRepo.UserRepository
 }
 
-func NewUserService(db *gorm.DB) *UserService {
-    return &UserService{DB: db}
+func NewUserService(db *gorm.DB, repo *userRepo.UserRepository) *UserService {
+    return &UserService{DB: db, Repo: repo}
 }
 
 func (service *UserService) RegisterUser(authHeader, name, email, password, confirm string) error {
