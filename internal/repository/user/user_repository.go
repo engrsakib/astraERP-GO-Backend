@@ -43,3 +43,17 @@ func (r *UserRepository) GetUsers(page int, limit int, search string) ([]models.
 
 	return users, total, nil
 }
+
+// single user with permissions
+func (r *UserRepository) GetUserByID(id string) (*models.User, error) {
+	var user models.User
+	
+	// ✅ use Preload to load permissions along with the user
+	// here we assume that User model has a field named "Permissions" which is a slice of UserPermission
+	// and that the UserPermission model has a foreign key relationship with User
+	if err := r.DB.Preload("Permissions").First(&user, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+	
+	return &user, nil
+}

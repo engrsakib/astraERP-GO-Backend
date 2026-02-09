@@ -10,6 +10,7 @@ type UserResponse struct {
 	Email     string    `json:"email"`
 	UserType  int8      `json:"user_type"`
 	Photo     string    `json:"photo"`
+	Permissions []string `json:"permissions,omitempty"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
