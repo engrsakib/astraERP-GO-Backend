@@ -5,6 +5,11 @@ type CreateFaqRequest struct {
 	Photo    string `json:"photo"`
 }
 
+type FaqAnswerRequest struct {
+	Question string `json:"question" binding:"required"`
+	Answer   string `json:"answer" binding:"required"`
+}
+
 type UpdateFaqRequest struct {
 	Headline *string `json:"headline"`
 	Photo    *string `json:"photo"`
