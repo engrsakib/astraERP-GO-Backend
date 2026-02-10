@@ -8,6 +8,11 @@ type FaqAnswerResponse struct {
 	Answer   string `json:"answer"`
 }
 
+type FaqLinks struct {
+    Self   string `json:"self"`
+    Edit   string `json:"edit"`
+    Delete string `json:"delete"`
+}
 
 type FaqResponse struct {
 	ID        int64     `json:"id"`

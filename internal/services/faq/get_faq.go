@@ -2,7 +2,6 @@ package faq
 
 import (
 	"math"
-
 	dto "github.com/engrsakib/erp-system/internal/dto/faq"
 )
 

@@ -7,18 +7,18 @@ import (
 
 type APIResponse struct {
 	Success bool        `json:"success"`
+	// Code    int         `json:"code,omitempty"`  
 	Message string      `json:"message"`
-	Data    interface{} `json:"data,omitempty"`
 	Meta    interface{} `json:"meta,omitempty"`
+	Data    interface{} `json:"data,omitempty"`
 	Error   string      `json:"error,omitempty"` 
-	Code    int         `json:"code,omitempty"`  
 }
 
 
 func SendResponse(c *gin.Context, statusCode int, message string, data interface{}, meta interface{}) {
 	response := APIResponse{
 		Success: statusCode >= 200 && statusCode < 300, 
-		Code:    statusCode,
+		// Code:    statusCode,
 		Message: message,
 		Data:    data,
 		Meta:    meta,
@@ -38,7 +38,7 @@ func SendError(c *gin.Context, status int, message string, err error) {
 
 	c.AbortWithStatusJSON(status, APIResponse{
 		Success: false,
-		Code:    status,   
+		// Code:    status,   
 		Message: message,
 		Error:   errorText, 
 	})
