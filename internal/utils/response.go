@@ -2,6 +2,7 @@ package utils
 
 import (
 	"github.com/gin-gonic/gin"
+	"fmt"
 )
 
 type APIResponse struct {
@@ -9,6 +10,8 @@ type APIResponse struct {
 	Message string      `json:"message"`
 	Data    interface{} `json:"data,omitempty"`
 	Meta    interface{} `json:"meta,omitempty"`
+	Error   string      `json:"error,omitempty"` 
+	Code    int         `json:"code,omitempty"`  
 }
 
 
@@ -23,12 +26,19 @@ func SendResponse(c *gin.Context, statusCode int, message string, data interface
 }
 
 
-func SendError(c *gin.Context, statusCode int, message string, err error) {
-	errMsg := message
-	if err != nil {
-		
-		errMsg = message + ": " + err.Error() 
-	}
+func SendError(c *gin.Context, status int, message string, err error) {
 	
-	SendResponse(c, statusCode, errMsg, nil, nil)
+	errorText := ""
+	if err != nil {
+		errorText = err.Error()
+		
+		fmt.Printf("❌ [API ERROR] Path: %s | Error: %v\n", c.Request.URL.Path, errorText)
+	}
+
+	c.AbortWithStatusJSON(status, APIResponse{
+		Success: false,
+		Message: message,
+		Error:   errorText, 
+		Code:    status,   
+	})
 }
