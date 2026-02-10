@@ -18,6 +18,7 @@ type APIResponse struct {
 func SendResponse(c *gin.Context, statusCode int, message string, data interface{}, meta interface{}) {
 	response := APIResponse{
 		Success: statusCode >= 200 && statusCode < 300, 
+		Code:    statusCode,
 		Message: message,
 		Data:    data,
 		Meta:    meta,
@@ -37,8 +38,8 @@ func SendError(c *gin.Context, status int, message string, err error) {
 
 	c.AbortWithStatusJSON(status, APIResponse{
 		Success: false,
+		Code:    status,   
 		Message: message,
 		Error:   errorText, 
-		Code:    status,   
 	})
 }

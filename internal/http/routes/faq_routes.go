@@ -18,10 +18,7 @@ func RegisterFaqRoutes(rg *gin.RouterGroup, db *gorm.DB) {
 
 
 	faqGroup := rg.Group("/faqs")
-	
-	
 	faqGroup.Use(middlewares.JWTAuth()) 
-	
 	{
 		
 		faqGroup.POST("", middlewares.CheckPermission(db, "faq.create"), handler.CreateFaq)

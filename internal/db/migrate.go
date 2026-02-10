@@ -15,8 +15,8 @@ func Migrate(db *gorm.DB) error {
 	err := db.AutoMigrate(
 		&models.User{},           
 		&models.UserPermission{}, 
-		// ভবিষ্যতে: &models.Product{},
-		// ভবিষ্যতে: &models.Order{},
+		&models.Faq{},       
+        &models.FaqAnswer{},
 	)
 
 	if err != nil {
