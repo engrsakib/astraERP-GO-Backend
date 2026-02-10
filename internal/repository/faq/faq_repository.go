@@ -14,8 +14,18 @@ func NewFaqRepository(db *gorm.DB) *FaqRepository {
 }
 
 
-func (r *FaqRepository) Create(faq *models.Faq) error {
+func (r *FaqRepository) CreateFaq(faq *models.Faq) error {
 	return r.DB.Create(faq).Error
+}
+
+func (r *FaqRepository) CreateAnswer(answer *models.FaqAnswer) error {
+	return r.DB.Create(answer).Error
+}
+
+func (r *FaqRepository) FindByID(id string) (*models.Faq, error) {
+	var faq models.Faq
+	err := r.DB.Preload("FaqAnswers").First(&faq, "id = ?", id).Error
+	return &faq, err
 }
 
 func (r *FaqRepository) FindAll(page, limit int, search string) ([]models.Faq, int64, error) {
@@ -38,12 +48,12 @@ func (r *FaqRepository) FindAll(page, limit int, search string) ([]models.Faq, i
 }
 
 
-func (r *FaqRepository) FindByID(id string) (*models.Faq, error) {
-	var faq models.Faq
+// func (r *FaqRepository) FindByID(id string) (*models.Faq, error) {
+// 	var faq models.Faq
 	
-	err := r.DB.Preload("FaqAnswers").First(&faq, "id = ?", id).Error
-	return &faq, err
-}
+// 	err := r.DB.Preload("FaqAnswers").First(&faq, "id = ?", id).Error
+// 	return &faq, err
+// }
 
 // Update
 func (r *FaqRepository) Update(faq *models.Faq) error {
