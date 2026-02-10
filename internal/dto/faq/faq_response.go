@@ -18,11 +18,16 @@ type FaqResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type CreateAnswerRequest struct {
+	FaqID    int64  `json:"faq_id" binding:"required"` 
+	Question string `json:"question" binding:"required"`
+	Answer   string `json:"answer" binding:"required"`
+}
 
 type PaginationMeta struct {
 	CurrentPage int `json:"current_page"`
 	TotalPages  int `json:"total_pages"`
-	TotalItems  int `json:"total_items"`
+	TotalItems  int64 `json:"total_items"`
 	ItemsPerPage int `json:"items_per_page"`
 	Limit int `json:"limit"`
 }
