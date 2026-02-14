@@ -2,8 +2,10 @@ package user
 
 import (
 	"net/http"
+	"os"
+	"strconv"
 
-	"github.com/engrsakib/erp-system/internal/dto/user/login"
+	dto "github.com/engrsakib/erp-system/internal/dto/user/login"
 	"github.com/engrsakib/erp-system/internal/services/user"
 	"github.com/gin-gonic/gin"
     "github.com/engrsakib/erp-system/internal/utils"
@@ -23,6 +25,30 @@ func NewAuthHandler(otpService *user.OTPService, userService *user.UserService, 
     }
 }
 
+
+func (h *AuthHandler) setAuthCookies(c *gin.Context, accessToken, refreshToken string) {
+	
+	cookieDomain := os.Getenv("COOKIE_DOMAIN")
+	if cookieDomain == "" {
+		cookieDomain = "localhost"
+	}
+
+	cookieSecure := os.Getenv("COOKIE_SECURE") == "true"
+
+	
+	accExp, _ := strconv.Atoi(os.Getenv("ACCESS_TOKEN_EXP"))
+	refExp, _ := strconv.Atoi(os.Getenv("REFRESH_TOKEN_EXP"))
+
+	
+	if accExp == 0 { accExp = 60 }        
+	if refExp == 0 { refExp = 30240 }    
+
+	// Access Token Cookie
+	c.SetCookie("access_token", accessToken, accExp*60, "/", cookieDomain, cookieSecure, true)
+
+	// Refresh Token Cookie
+	c.SetCookie("refresh_token", refreshToken, refExp*60, "/", cookieDomain, cookieSecure, true)
+}
 
 // SendOTP godoc
 // @Summary      Send OTP
@@ -101,42 +127,31 @@ func (h *AuthHandler) VerifyOTP(c *gin.Context) {
 // @Failure 500 {object} utils.APIResponse "Internal Server Error"
 // @Router /auth/register [post]
 func (h *AuthHandler) RegisterUser(c *gin.Context) {
-    // ১. ইনপুট বাইন্ডিং (Validation সহ)
-    var req struct {
-        Name     string `json:"name" binding:"required"`
-        Email    string `json:"email" binding:"required,email"`
-        Password string `json:"password" binding:"required,min=6"`
-        Confirm  string `json:"confirm" binding:"required,eqfield=Password"` // পাসওয়ার্ড ম্যাচ করছে কিনা চেক করবে
-    }
+	var req struct {
+		Name     string `json:"name" binding:"required"`
+		Email    string `json:"email" binding:"required,email"`
+		Password string `json:"password" binding:"required,min=6"`
+		Confirm  string `json:"confirm" binding:"required,eqfield=Password"`
+	}
 
-    if err := c.ShouldBindJSON(&req); err != nil {
-        utils.SendError(c, http.StatusBadRequest, "Invalid input data. Please check required fields.", err)
-        return
-    }
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.SendError(c, http.StatusBadRequest, "Invalid input data", err)
+		return
+	}
 
-    // ২. হেডার থেকে টোকেন নেওয়া
-    authHeader := c.GetHeader("Authorization")
-    if authHeader == "" {
-        utils.SendError(c, http.StatusBadRequest, "Authorization header is missing", nil)
-        return
-    }
+	authHeader := c.GetHeader("Authorization")
+	accessToken, refreshToken, err := h.UserService.RegisterUser(authHeader, req.Name, req.Email, req.Password, req.Confirm)
+	if err != nil {
+		utils.SendError(c, http.StatusBadRequest, "Registration failed", err)
+		return
+	}
 
-    // ৩. সার্ভিস কল করা (যা এখন ৩টি ভ্যালু রিটার্ন করে)
-    accessToken, refreshToken, err := h.UserService.RegisterUser(authHeader, req.Name, req.Email, req.Password, req.Confirm)
-    if err != nil {
-        // সার্ভিসের এরর ক্লায়েন্টকে পাঠানো
-        utils.SendError(c, http.StatusBadRequest, "Registration failed", err)
-        return
-    }
+	h.setAuthCookies(c, accessToken, refreshToken)
 
-    // ৪. রেসপন্স ডাটা তৈরি
-    responseData := map[string]string{
-        "access_token":  accessToken,
-        "refresh_token": refreshToken,
-    }
-
-    // ৫. সফল রেসপন্স পাঠানো (201 Created)
-    utils.SendResponse(c, http.StatusCreated, "User registered successfully", responseData, nil)
+	utils.SendResponse(c, http.StatusCreated, "User registered successfully", gin.H{
+		"access_token":  accessToken,
+		"refresh_token": refreshToken,
+	}, nil)
 }
 
 
@@ -154,21 +169,23 @@ func (h *AuthHandler) RegisterUser(c *gin.Context) {
 // @Failure 401 {object} map[string]string "Unauthorized"
 // @Router /auth/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
-    var req login.UserLoginRequest
+	var req dto.UserLoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(400, gin.H{"error": err.Error()})
-        return
-    }
+	result, err := h.LoginService.Login(req)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
 
-    result, err := h.LoginService.Login(req)
-    if err != nil {
-        c.JSON(401, gin.H{"error": err.Error()})
-        return
-    }
+	// ✅ হেল্পার মেথড ব্যবহার
+	h.setAuthCookies(c, result.AccessToken, result.RefreshToken)
 
-    c.JSON(200, gin.H{
-        "success": true,
-        "data":    result,
-    })
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    result,
+	})
 }
