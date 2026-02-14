@@ -181,7 +181,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	// ✅ হেল্পার মেথড ব্যবহার
+
 	h.setAuthCookies(c, result.AccessToken, result.RefreshToken)
 
 	c.JSON(http.StatusOK, gin.H{

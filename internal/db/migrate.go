@@ -17,6 +17,8 @@ func Migrate(db *gorm.DB) error {
 		&models.UserPermission{}, 
 		&models.Faq{},       
         &models.FaqAnswer{},
+		&models.GroupType{},
+		&models.Group{},
 	)
 
 	if err != nil {
