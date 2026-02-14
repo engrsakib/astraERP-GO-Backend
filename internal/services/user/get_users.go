@@ -16,7 +16,7 @@ func (s *UserService) GetUsers(query dto.PaginationQuery) ([]dto.UserResponse, *
 		return nil, nil, err
 	}
 
-	// ২. মডেল থেকে DTO তে কনভার্ট
+	
 	var userResponses []dto.UserResponse
 	for _, u := range users {
 		userResponses = append(userResponses, dto.UserResponse{

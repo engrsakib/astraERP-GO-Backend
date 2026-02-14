@@ -32,6 +32,7 @@ func main() {
     redisClient := db.NewRedis(cfg.RedisAddr, cfg.RedisPass, cfg.RedisDB)
     _ = redisClient 
 
+    
     r := routes.NewRouter(pg, redisClient)
 
     log.Printf("Server running on %s", cfg.AppPort)

@@ -2,10 +2,13 @@ package user
 
 import (
 	"net/http"
+	"os"
+	"strconv"
 
-	"github.com/engrsakib/erp-system/internal/dto/user/login"
+	dto "github.com/engrsakib/erp-system/internal/dto/user/login"
 	"github.com/engrsakib/erp-system/internal/services/user"
 	"github.com/gin-gonic/gin"
+    "github.com/engrsakib/erp-system/internal/utils"
 )
 
 type AuthHandler struct {
@@ -22,6 +25,30 @@ func NewAuthHandler(otpService *user.OTPService, userService *user.UserService, 
     }
 }
 
+
+func (h *AuthHandler) setAuthCookies(c *gin.Context, accessToken, refreshToken string) {
+	
+	cookieDomain := os.Getenv("COOKIE_DOMAIN")
+	if cookieDomain == "" {
+		cookieDomain = "localhost"
+	}
+
+	cookieSecure := os.Getenv("COOKIE_SECURE") == "true"
+
+	
+	accExp, _ := strconv.Atoi(os.Getenv("ACCESS_TOKEN_EXP"))
+	refExp, _ := strconv.Atoi(os.Getenv("REFRESH_TOKEN_EXP"))
+
+	
+	if accExp == 0 { accExp = 60 }        
+	if refExp == 0 { refExp = 30240 }    
+
+	// Access Token Cookie
+	c.SetCookie("access_token", accessToken, accExp*60, "/", cookieDomain, cookieSecure, true)
+
+	// Refresh Token Cookie
+	c.SetCookie("refresh_token", refreshToken, refExp*60, "/", cookieDomain, cookieSecure, true)
+}
 
 // SendOTP godoc
 // @Summary      Send OTP
@@ -87,39 +114,44 @@ func (h *AuthHandler) VerifyOTP(c *gin.Context) {
 }
 
 
-// RegisterUser godoc 
-// @Summary Register new user 
-// @Description Register a new user using temporary JWT token from OTP verification 
-// @Tags auth 
-// @Accept json 
-// @Produce json 
-// @Param Authorization header string true "Temporary JWT Token" 
-// @Param body body struct{Name string; Email string; Password string; Confirm string} true "User registration data" 
-// @Success 200 {object} map[string]interface{} "User registered successfully" 
-// @Failure 400 {object} map[string]string "Invalid input or token" 
+// RegisterUser godoc
+// @Summary Register a new user
+// @Description Register a new user using the temporary JWT token received after OTP verification. Returns Access & Refresh tokens.
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer <Temporary_Token>"
+// @Param request body struct{Name string "User Name"; Email string "User Email"; Password string "Password"; Confirm string "Confirm Password"} true "User Registration Data"
+// @Success 201 {object} utils.APIResponse{data=map[string]string} "Registration Successful"
+// @Failure 400 {object} utils.APIResponse "Invalid Input or Token"
+// @Failure 500 {object} utils.APIResponse "Internal Server Error"
 // @Router /auth/register [post]
 func (h *AuthHandler) RegisterUser(c *gin.Context) {
-    var req struct {
-        Name     string `json:"name"`
-        Email    string `json:"email"`
-        Password string `json:"password"`
-        Confirm  string `json:"confirm"`
-    }
+	var req struct {
+		Name     string `json:"name" binding:"required"`
+		Email    string `json:"email" binding:"required,email"`
+		Password string `json:"password" binding:"required,min=6"`
+		Confirm  string `json:"confirm" binding:"required,eqfield=Password"`
+	}
 
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
-        return
-    }
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.SendError(c, http.StatusBadRequest, "Invalid input data", err)
+		return
+	}
 
-    authHeader := c.GetHeader("Authorization")
+	authHeader := c.GetHeader("Authorization")
+	accessToken, refreshToken, err := h.UserService.RegisterUser(authHeader, req.Name, req.Email, req.Password, req.Confirm)
+	if err != nil {
+		utils.SendError(c, http.StatusBadRequest, "Registration failed", err)
+		return
+	}
 
-    err := h.UserService.RegisterUser(authHeader, req.Name, req.Email, req.Password, req.Confirm)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
+	h.setAuthCookies(c, accessToken, refreshToken)
 
-    c.JSON(http.StatusOK, gin.H{"success": true, "message": "User registered"})
+	utils.SendResponse(c, http.StatusCreated, "User registered successfully", gin.H{
+		"access_token":  accessToken,
+		"refresh_token": refreshToken,
+	}, nil)
 }
 
 
@@ -137,21 +169,23 @@ func (h *AuthHandler) RegisterUser(c *gin.Context) {
 // @Failure 401 {object} map[string]string "Unauthorized"
 // @Router /auth/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
-    var req login.UserLoginRequest
+	var req dto.UserLoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(400, gin.H{"error": err.Error()})
-        return
-    }
+	result, err := h.LoginService.Login(req)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
 
-    result, err := h.LoginService.Login(req)
-    if err != nil {
-        c.JSON(401, gin.H{"error": err.Error()})
-        return
-    }
+	// ✅ হেল্পার মেথড ব্যবহার
+	h.setAuthCookies(c, result.AccessToken, result.RefreshToken)
 
-    c.JSON(200, gin.H{
-        "success": true,
-        "data":    result,
-    })
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    result,
+	})
 }

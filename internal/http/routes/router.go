@@ -16,7 +16,7 @@ func NewRouter(db *gorm.DB, rdb *redis.Client) *gin.Engine {
 	
 	r := gin.New()
 
-	
+	r.Use(middlewares.CorsMiddleware())
 	r.Use(middlewares.Logger())             
 	r.Use(middlewares.GlobalPanicRecovery()) 
 
@@ -41,6 +41,7 @@ func NewRouter(db *gorm.DB, rdb *redis.Client) *gin.Engine {
 	
 		RegisterUserRoutes(v1, db, rdb)
 		RegisterPermissionRoutes(v1, db)
+		RegisterFaqRoutes(v1, db)
 		
 	}
 
