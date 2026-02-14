@@ -3,6 +3,7 @@ package group
 import (
 	"github.com/engrsakib/erp-system/internal/models"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type GroupTypeRepository struct {
@@ -43,4 +44,28 @@ func (r *GroupTypeRepository) Delete(id int64) error {
 		return gorm.ErrRecordNotFound
 	}
 	return nil
+}
+
+
+func (r *GroupTypeRepository) GetAllWithQuery(search string, page, limit int) ([]models.GroupType, int64, error) {
+    var items []models.GroupType
+    var total int64
+
+    
+    query := r.db.Model(&models.GroupType{})
+
+    if search != "" {
+        search = strings.TrimSpace(search)
+        
+        query = query.Where("LOWER(name) LIKE LOWER(?)", "%"+search+"%")
+    }
+
+    if err := query.Count(&total).Error; err != nil {
+        return nil, 0, err
+    }
+
+    offset := (page - 1) * limit
+    err := query.Order("updated_at DESC").Offset(offset).Limit(limit).Find(&items).Error
+
+    return items, total, err
 }
