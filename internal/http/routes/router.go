@@ -16,7 +16,7 @@ func NewRouter(db *gorm.DB, rdb *redis.Client) *gin.Engine {
 	
 	r := gin.New()
 
-	
+	r.Use(middlewares.CorsMiddleware())
 	r.Use(middlewares.Logger())             
 	r.Use(middlewares.GlobalPanicRecovery()) 
 
