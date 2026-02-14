@@ -6,6 +6,7 @@ import (
 	"github.com/engrsakib/erp-system/internal/dto/user/login"
 	"github.com/engrsakib/erp-system/internal/services/user"
 	"github.com/gin-gonic/gin"
+    "github.com/engrsakib/erp-system/internal/utils"
 )
 
 type AuthHandler struct {
@@ -87,39 +88,55 @@ func (h *AuthHandler) VerifyOTP(c *gin.Context) {
 }
 
 
-// RegisterUser godoc 
-// @Summary Register new user 
-// @Description Register a new user using temporary JWT token from OTP verification 
-// @Tags auth 
-// @Accept json 
-// @Produce json 
-// @Param Authorization header string true "Temporary JWT Token" 
-// @Param body body struct{Name string; Email string; Password string; Confirm string} true "User registration data" 
-// @Success 200 {object} map[string]interface{} "User registered successfully" 
-// @Failure 400 {object} map[string]string "Invalid input or token" 
+// RegisterUser godoc
+// @Summary Register a new user
+// @Description Register a new user using the temporary JWT token received after OTP verification. Returns Access & Refresh tokens.
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer <Temporary_Token>"
+// @Param request body struct{Name string "User Name"; Email string "User Email"; Password string "Password"; Confirm string "Confirm Password"} true "User Registration Data"
+// @Success 201 {object} utils.APIResponse{data=map[string]string} "Registration Successful"
+// @Failure 400 {object} utils.APIResponse "Invalid Input or Token"
+// @Failure 500 {object} utils.APIResponse "Internal Server Error"
 // @Router /auth/register [post]
 func (h *AuthHandler) RegisterUser(c *gin.Context) {
+    // ১. ইনপুট বাইন্ডিং (Validation সহ)
     var req struct {
-        Name     string `json:"name"`
-        Email    string `json:"email"`
-        Password string `json:"password"`
-        Confirm  string `json:"confirm"`
+        Name     string `json:"name" binding:"required"`
+        Email    string `json:"email" binding:"required,email"`
+        Password string `json:"password" binding:"required,min=6"`
+        Confirm  string `json:"confirm" binding:"required,eqfield=Password"` // পাসওয়ার্ড ম্যাচ করছে কিনা চেক করবে
     }
 
     if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
+        utils.SendError(c, http.StatusBadRequest, "Invalid input data. Please check required fields.", err)
         return
     }
 
+    // ২. হেডার থেকে টোকেন নেওয়া
     authHeader := c.GetHeader("Authorization")
-
-    err := h.UserService.RegisterUser(authHeader, req.Name, req.Email, req.Password, req.Confirm)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+    if authHeader == "" {
+        utils.SendError(c, http.StatusBadRequest, "Authorization header is missing", nil)
         return
     }
 
-    c.JSON(http.StatusOK, gin.H{"success": true, "message": "User registered"})
+    // ৩. সার্ভিস কল করা (যা এখন ৩টি ভ্যালু রিটার্ন করে)
+    accessToken, refreshToken, err := h.UserService.RegisterUser(authHeader, req.Name, req.Email, req.Password, req.Confirm)
+    if err != nil {
+        // সার্ভিসের এরর ক্লায়েন্টকে পাঠানো
+        utils.SendError(c, http.StatusBadRequest, "Registration failed", err)
+        return
+    }
+
+    // ৪. রেসপন্স ডাটা তৈরি
+    responseData := map[string]string{
+        "access_token":  accessToken,
+        "refresh_token": refreshToken,
+    }
+
+    // ৫. সফল রেসপন্স পাঠানো (201 Created)
+    utils.SendResponse(c, http.StatusCreated, "User registered successfully", responseData, nil)
 }
 
 

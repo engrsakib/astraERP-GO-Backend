@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import ("time"
+"gorm.io/gorm"
+)
 
 const (
     UserTypeSuperAdmin = 0 // super Admin: most powerful user
@@ -21,6 +23,8 @@ type User struct {
     UserType int8 `gorm:"type:smallint;default:3;not null" json:"user_type"` 
 
    Permissions []UserPermission `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"permissions"`
+
+   DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
     
     CreatedAt time.Time `json:"created_at"`
     UpdatedAt time.Time `json:"updated_at"`

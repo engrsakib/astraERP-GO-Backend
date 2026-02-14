@@ -68,5 +68,17 @@ func (r *UserRepository) UpdateUser(user *models.User) error {
 // DeleteUser: 
 // note: For permanent delete, use Unscoped().Delete() instead of Delete() to bypass soft delete
 func (r *UserRepository) DeleteUser(id string) error {
-    return r.DB.Unscoped().Delete(&models.User{}, "id = ?", id).Error
+
+	result := r.DB.Delete(&models.User{}, "id = ?", id)
+	
+	if result.Error != nil {
+		return result.Error
+	}
+	
+	
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	
+	return nil
 }
