@@ -44,6 +44,7 @@ func NewRouter(db *gorm.DB, rdb *redis.Client) *gin.Engine {
 		RegisterFaqRoutes(v1, db)
 		RegisterGroupTypeRoutes(v1, db)
 		RegisterGroupRoutes(v1, db)
+		RegisterMemberRoutes(v1, db)
 	}
 
 	return r
