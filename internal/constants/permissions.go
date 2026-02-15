@@ -29,6 +29,12 @@ const (
     GroupTypeUpdate PermissionSlug = "group_type.update"
     GroupTypeDelete PermissionSlug = "group_type.delete"
     GroupTypeView   PermissionSlug = "group_type.view"
+
+    // ➤ Group Management
+    GroupCreate PermissionSlug = "group.create"
+    GroupUpdate PermissionSlug = "group.update"
+    GroupDelete PermissionSlug = "group.delete"
+    GroupView   PermissionSlug = "group.view"
 )
 
 var AllPermissions = []struct {
@@ -61,4 +67,10 @@ var AllPermissions = []struct {
     {Name: "Update Group Type", Slug: GroupTypeUpdate},
     {Name: "Delete Group Type", Slug: GroupTypeDelete},
     {Name: "View Group Types", Slug: GroupTypeView},
+
+    // Group
+    {Name: "Create Group", Slug: GroupCreate},
+    {Name: "Update Group", Slug: GroupUpdate},
+    {Name: "Delete Group", Slug: GroupDelete},
+    {Name: "View Groups", Slug: GroupView},
 }
