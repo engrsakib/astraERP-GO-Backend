@@ -19,67 +19,57 @@ import (
 // @Failure 500 {object} utils.APIResponse
 // @Router /groups [post]
 func CreateGroupHandler(service *group_root.CreateGroupService) gin.HandlerFunc {
-    return func(c *gin.Context) {
-        
-        var req group.GroupRequest
-        if err := c.ShouldBindJSON(&req); err != nil {
-            utils.SendError(c, 400, "Invalid request body", err)
-            return
-        }
+	return func(c *gin.Context) {
+		
+		var req group.GroupRequest
+		if err := c.ShouldBindJSON(&req); err != nil {
+			utils.SendError(c, 400, "Invalid request body", err)
+			return
+		}
 
-       
-        val, exists := c.Get("userId")
-        if !exists {
-            utils.SendError(c, 401, "Unauthorized access: user identity not found", nil)
-            return
-        }
+	
+		val, exists := c.Get("claims")
+		if !exists {
+			utils.SendError(c, 401, "Unauthorized access: user identity not found", nil)
+			return
+		}
 
-       
-        var userID int64
-        switch v := val.(type) {
-        case int:
-            userID = int64(v)
-        case uint:
-            userID = int64(v)
-        case float64: 
-            userID = int64(v)
-        case int64:
-            userID = v
-        default:
-            utils.SendError(c, 500, "Internal server error: invalid user ID type", nil)
-            return
-        }
+		claims, ok := val.(map[string]interface{})
+		if !ok {
+			utils.SendError(c, 500, "Internal server error: invalid claims format", nil)
+			return
+		}
 
-        
-        data, err := service.Execute(req, userID)
-        if err != nil {
-            utils.SendError(c, 500, "Failed to create group", err)
-            return
-        }
+		
+		var userID int64
+		idVal, ok := claims["id"]
+		if !ok {
+			utils.SendError(c, 401, "Unauthorized access: ID not found in claims", nil)
+			return
+		}
 
-        utils.SendResponse(c, 201, "Group created successfully", data, nil)
-    }
+		
+		switch v := idVal.(type) {
+		case float64:
+			userID = int64(v)
+		case int:
+			userID = int64(v)
+		case int64:
+			userID = v
+		case uint:
+			userID = int64(v)
+		default:
+			utils.SendError(c, 500, "Internal server error: unsupported user ID type", nil)
+			return
+		}
+
+		data, err := service.Execute(req, userID)
+		if err != nil {
+			utils.SendError(c, 500, "Failed to create group", err)
+			return
+		}
+
+		
+		utils.SendResponse(c, 201, "Group created successfully", data, nil)
+	}
 }
-
-
-
-
-
-// func CreateGroupHandler(service *group_root.CreateGroupService) gin.HandlerFunc {
-//     return func(c *gin.Context) {
-
-//         var req group.GroupRequest
-//         if err := c.ShouldBindJSON(&req); err != nil {
-//             utils.SendError(c, 400, "Invalid request body", err)
-//             return
-//         }
-
-//         data, err := service.Execute(req, ) // Assuming addedBy is 1 for now
-//         if err != nil {
-//             utils.SendError(c, 500, "Failed to create group", err)
-//             return
-//         }
-
-//         utils.SendResponse(c, 201, "Group created successfully", data, nil)
-//     }
-// }
