@@ -13,8 +13,8 @@ import (
 // @Tags         Auth
 // @Accept       json
 // @Produce      json
-// @Param        request body auth.RefreshTokenRequest true "Refresh Token"
-// @Success      200  {object}  auth.RefreshTokenResponse
+// @Param        request body dto.RefreshTokenRequest true "Refresh Token"
+// @Success      200  {object}  dto.RefreshTokenResponse
 // @Failure      400  {object}  map[string]interface{}  "Invalid Request"
 // @Failure      401  {object}  map[string]interface{}  "Unauthorized"
 // @Router       /api/v1/auth/refresh-token [post]

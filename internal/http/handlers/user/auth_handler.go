@@ -56,10 +56,9 @@ func (h *AuthHandler) setAuthCookies(c *gin.Context, accessToken, refreshToken s
 // @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        body  body  struct{Mobile string}  true  "Mobile number"
-// @Success      200   {object} map[string]string
-// @Failure      400   {object} map[string]string
-// @Failure      500   {object} map[string]string
+// @Param        body  body  dto.SendOTPRequest  true  "Mobile number"
+// @Success      200   {object} map[string]string "OTP sent"
+// @Failure      400   {object} map[string]string "Mobile required"
 // @Router       /auth/send-otp [post]
 func (h *AuthHandler) SendOTP(c *gin.Context) {
     var req struct {
@@ -86,9 +85,8 @@ func (h *AuthHandler) SendOTP(c *gin.Context) {
 // @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        body  body  struct{Mobile string; OTP string}  true  "Mobile and OTP"
-// @Success      200   {object} map[string]interface{}
-// @Failure      400   {object} map[string]string
+// @Param        body  body  dto.VerifyOTPRequest  true  "Mobile and OTP"
+// @Success      200   {object} map[string]interface{} "OTP verified"
 // @Router       /auth/verify-otp [post]
 func (h *AuthHandler) VerifyOTP(c *gin.Context) {
     var req struct {
@@ -115,17 +113,15 @@ func (h *AuthHandler) VerifyOTP(c *gin.Context) {
 
 
 // RegisterUser godoc
-// @Summary Register a new user
-// @Description Register a new user using the temporary JWT token received after OTP verification. Returns Access & Refresh tokens.
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Param Authorization header string true "Bearer <Temporary_Token>"
-// @Param request body struct{Name string "User Name"; Email string "User Email"; Password string "Password"; Confirm string "Confirm Password"} true "User Registration Data"
-// @Success 201 {object} utils.APIResponse{data=map[string]string} "Registration Successful"
-// @Failure 400 {object} utils.APIResponse "Invalid Input or Token"
-// @Failure 500 {object} utils.APIResponse "Internal Server Error"
-// @Router /auth/register [post]
+// @Summary      Register a new user
+// @Description  Register using temporary token. Returns Access & Refresh tokens.
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        Authorization header string true "Bearer <Temporary_Token>"
+// @Param        request body dto.RegisterRequest true "User Registration Data"
+// @Success      201 {object} utils.APIResponse "User registered successfully"
+// @Router       /auth/register [post]
 func (h *AuthHandler) RegisterUser(c *gin.Context) {
 	var req struct {
 		Name     string `json:"name" binding:"required"`
@@ -158,16 +154,14 @@ func (h *AuthHandler) RegisterUser(c *gin.Context) {
 
 
 // Login godoc 
-// @Summary Login user 
-// @Description Login using mobile & password and receive access + refresh tokens 
-// @Tags auth 
-// @Accept json 
-// @Produce json 
-// @Param body body login.UserLoginRequest true "Login credentials" 
-// @Success 200 {object} map[string]interface{} "Login successful" 
-// @Failure 400 {object} map[string]string "Invalid input" 
-// @Failure 401 {object} map[string]string "Unauthorized"
-// @Router /auth/login [post]
+// @Summary      Login user 
+// @Description  Login using mobile & password and receive access + refresh tokens 
+// @Tags         auth 
+// @Accept       json 
+// @Produce      json 
+// @Param        body body dto.UserLoginRequest true "Login credentials" 
+// @Success      200 {object} map[string]interface{} "Login successful" 
+// @Router       /auth/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req dto.UserLoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
