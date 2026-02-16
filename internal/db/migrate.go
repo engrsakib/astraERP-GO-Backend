@@ -11,6 +11,10 @@ import (
 func Migrate(db *gorm.DB) error {
 	log.Println("🔄 Running Database Migration...")
 
+	if err := db.Exec("CREATE EXTENSION IF NOT EXISTS postgis;").Error; err != nil {
+		log.Printf("❌ Failed to enable PostGIS extension: %v", err)
+		return err
+	}
 	
 	err := db.AutoMigrate(
 		&models.User{},           
