@@ -1,0 +1,1447 @@
+basePath: /
+definitions:
+  github_com_engrsakib_erp-system_internal_dto_auth.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_auth.RefreshTokenResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_faq.CreateAnswerRequest:
+    properties:
+      answer:
+        type: string
+      faq_id:
+        type: integer
+      question:
+        type: string
+    required:
+    - answer
+    - faq_id
+    - question
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_faq.CreateFaqRequest:
+    properties:
+      headline:
+        type: string
+      photo:
+        type: string
+    required:
+    - headline
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_faq.FaqAnswerResponse:
+    properties:
+      answer:
+        type: string
+      id:
+        type: integer
+      question:
+        type: string
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_faq.FaqResponse:
+    properties:
+      added_by:
+        type: integer
+      answers:
+        items:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_faq.FaqAnswerResponse'
+        type: array
+      created_at:
+        type: string
+      headline:
+        type: string
+      id:
+        type: integer
+      photo:
+        type: string
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_faq.UpdateFaqRequest:
+    properties:
+      headline:
+        type: string
+      photo:
+        type: string
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_geofence.GeofenceRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_geofence_point.GeofencePointRequest:
+    properties:
+      geofence_id:
+        type: integer
+      latitude:
+        type: number
+      longitude:
+        type: number
+      seq_order:
+        type: integer
+    required:
+    - geofence_id
+    - latitude
+    - longitude
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_group.GroupRequest:
+    properties:
+      group_type_id:
+        type: integer
+      name:
+        type: string
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_group.GroupTypeRequest:
+    properties:
+      name:
+        maxLength: 100
+        minLength: 2
+        type: string
+    required:
+    - name
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_group.MemberRequest:
+    properties:
+      group_id:
+        type: integer
+      status:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_user.UpdateUserRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      photo:
+        type: string
+      user_type:
+        type: integer
+    required:
+    - name
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_user.UserResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      mobile:
+        type: string
+      name:
+        type: string
+      permissions:
+        items:
+          type: string
+        type: array
+      photo:
+        type: string
+      user_type:
+        type: integer
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_user_login.RegisterRequest:
+    properties:
+      mobile:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - mobile
+    - name
+    - password
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_user_login.SendOTPRequest:
+    properties:
+      mobile:
+        type: string
+    required:
+    - mobile
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_user_login.UserLoginRequest:
+    properties:
+      mobile:
+        type: string
+      password:
+        type: string
+    required:
+    - mobile
+    - password
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_user_login.VerifyOTPRequest:
+    properties:
+      mobile:
+        type: string
+      otp:
+        type: string
+    required:
+    - mobile
+    - otp
+    type: object
+  github_com_engrsakib_erp-system_internal_dto_user_permission.AssignPermissionRequest:
+    properties:
+      permissions:
+        items:
+          type: string
+        type: array
+      user_id:
+        type: integer
+    required:
+    - permissions
+    - user_id
+    type: object
+  github_com_engrsakib_erp-system_internal_models.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      mobile:
+        type: string
+      name:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_models.UserPermission'
+        type: array
+      photo:
+        type: string
+      updated_at:
+        type: string
+      user_type:
+        type: integer
+    type: object
+  github_com_engrsakib_erp-system_internal_models.UserPermission:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      permission_slug:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  github_com_engrsakib_erp-system_internal_utils.APIResponse:
+    properties:
+      data: {}
+      error:
+        type: string
+      message:
+        description: Code    int         `json:"code,omitempty"`
+        type: string
+      meta: {}
+      success:
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: ERP backend with Go, Gin, GORM, PostgreSQL, Redis.
+  title: ERP System API
+  version: "1.0"
+paths:
+  /api/v1/admin/assign-permission:
+    post:
+      consumes:
+      - application/json
+      description: Super Admin can assign or update permissions for a specific user.
+        This will replace old permissions.
+      parameters:
+      - description: User ID and List of Permission Slugs
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_user_permission.AssignPermissionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Response
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden (Only Super Admin)
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Assign Permissions
+      tags:
+      - Admin
+  /api/v1/auth/refresh-token:
+    post:
+      consumes:
+      - application/json
+      description: Exchange a valid refresh token for a new access token and refresh
+        token
+      parameters:
+      - description: Refresh Token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_auth.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_auth.RefreshTokenResponse'
+        "400":
+          description: Invalid Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get New Access Token
+      tags:
+      - Auth
+  /api/v1/users:
+    get:
+      consumes:
+      - application/json
+      description: Get users list with pagination & search
+      parameters:
+      - description: Page No
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Search Keyword
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Get All Users
+      tags:
+      - User
+  /api/v1/users/{id}:
+    delete:
+      description: Deletes a user and cascades delete to permissions
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Delete user
+      tags:
+      - User
+    get:
+      description: Get detailed user info including permissions
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_user.UserResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Get User by ID with Permissions
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_user.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_user.UserResponse'
+              type: object
+      summary: Update user info (Mobile cannot be updated)
+      tags:
+      - User
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login using mobile & password and receive access + refresh tokens
+      parameters:
+      - description: Login credentials
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_user_login.UserLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Login user
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register using temporary token. Returns Access & Refresh tokens.
+      parameters:
+      - description: Bearer <Temporary_Token>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User Registration Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_user_login.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User registered successfully
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Register a new user
+      tags:
+      - auth
+  /auth/send-otp:
+    post:
+      consumes:
+      - application/json
+      description: Send 6-digit OTP to mobile number via SMS
+      parameters:
+      - description: Mobile number
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_user_login.SendOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP sent
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Mobile required
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Send OTP
+      tags:
+      - auth
+  /auth/verify-otp:
+    post:
+      consumes:
+      - application/json
+      description: Verify OTP and return temporary JWT token
+      parameters:
+      - description: Mobile and OTP
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_user_login.VerifyOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP verified
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Verify OTP
+      tags:
+      - auth
+  /faqs:
+    get:
+      consumes:
+      - application/json
+      description: Get a paginated list of FAQs (Headlines only)
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Search by headline
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_faq.FaqResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: Get All FAQs
+      tags:
+      - Faq
+    post:
+      consumes:
+      - application/json
+      description: Create a new FAQ headline and photo
+      parameters:
+      - description: FAQ Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_faq.CreateFaqRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_faq.FaqResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new FAQ Topic
+      tags:
+      - Faq
+  /faqs/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an FAQ and all associated answers
+      parameters:
+      - description: FAQ ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete FAQ
+      tags:
+      - Faq
+    get:
+      consumes:
+      - application/json
+      description: Get a specific FAQ and all its answers by ID
+      parameters:
+      - description: FAQ ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_faq.FaqResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: Get Single FAQ Details
+      tags:
+      - Faq
+    put:
+      consumes:
+      - application/json
+      description: Update FAQ headline or photo
+      parameters:
+      - description: FAQ ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_faq.UpdateFaqRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_faq.FaqResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: Update FAQ
+      tags:
+      - Faq
+  /faqs/answers:
+    post:
+      consumes:
+      - application/json
+      description: Add a new question and answer to an existing FAQ topic
+      parameters:
+      - description: Answer Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_faq.CreateAnswerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_faq.FaqAnswerResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      security:
+      - BearerAuth: []
+      summary: Add an Answer to an FAQ
+      tags:
+      - Faq
+  /geofence-points:
+    get:
+      parameters:
+      - description: Filter by geofence
+        in: query
+        name: geofence_id
+        type: integer
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Get all geofence points
+      tags:
+      - Geofence Point
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Point Data
+        in: body
+        name: point
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_geofence_point.GeofencePointRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Create geofence point
+      tags:
+      - Geofence Point
+  /geofence-points/{id}:
+    delete:
+      parameters:
+      - description: Point ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Delete geofence point
+      tags:
+      - Geofence Point
+    get:
+      parameters:
+      - description: Point ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Get point by ID
+      tags:
+      - Geofence Point
+    put:
+      parameters:
+      - description: Point ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Point Data
+        in: body
+        name: point
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_geofence_point.GeofencePointRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Update geofence point
+      tags:
+      - Geofence Point
+  /geofences:
+    get:
+      description: Get all geofences with pagination & search
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Search by name
+        in: query
+        name: search
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Get all geofences
+      tags:
+      - Geofence
+    post:
+      consumes:
+      - application/json
+      description: Create a new geofence
+      parameters:
+      - description: Geofence Data
+        in: body
+        name: geofence
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_geofence.GeofenceRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Create a new geofence
+      tags:
+      - Geofence
+  /geofences/{id}:
+    delete:
+      description: Soft delete geofence by ID
+      parameters:
+      - description: Geofence ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Delete geofence
+      tags:
+      - Geofence
+    get:
+      description: Get a single geofence by ID
+      parameters:
+      - description: Geofence ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Get geofence by ID
+      tags:
+      - Geofence
+    put:
+      description: Update geofence details
+      parameters:
+      - description: Geofence ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Geofence Data
+        in: body
+        name: geofence
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_geofence.GeofenceRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Update geofence
+      tags:
+      - Geofence
+  /group-members:
+    get:
+      description: Get all members with pagination & search
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Search by user name
+        in: query
+        name: search
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Get all group members
+      tags:
+      - Group Members
+    post:
+      consumes:
+      - application/json
+      description: Create a new group member
+      parameters:
+      - description: Member Data
+        in: body
+        name: member
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_group.MemberRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Add a member to a group
+      tags:
+      - Group Members
+  /group-members/{id}:
+    delete:
+      description: Soft delete a group member by ID
+      parameters:
+      - description: Member ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Delete a group member
+      tags:
+      - Group Members
+    get:
+      description: Get a single group member by ID
+      parameters:
+      - description: Member ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Get member by ID
+      tags:
+      - Group Members
+    put:
+      consumes:
+      - application/json
+      description: Update member details
+      parameters:
+      - description: Member ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Member Data
+        in: body
+        name: member
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_group.MemberRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Update a group member
+      tags:
+      - Group Members
+  /group-types:
+    get:
+      description: Retrieve all group types
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Get All Group Types
+      tags:
+      - GroupType
+    post:
+      consumes:
+      - application/json
+      description: Create a new group type
+      parameters:
+      - description: Group Type Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_group.GroupTypeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Create Group Type
+      tags:
+      - GroupType
+  /group-types/{id}:
+    delete:
+      description: Delete a group type by ID
+      parameters:
+      - description: Group Type ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Delete Group Type
+      tags:
+      - GroupType
+    get:
+      description: Retrieve a single group type by ID
+      parameters:
+      - description: Group Type ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Get Group Type by ID
+      tags:
+      - GroupType
+    put:
+      consumes:
+      - application/json
+      description: Update an existing group type
+      parameters:
+      - description: Group Type ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Group Type Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_group.GroupTypeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Update Group Type
+      tags:
+      - GroupType
+  /groups:
+    get:
+      description: Get all groups with pagination & search
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Search by name
+        in: query
+        name: search
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Get all groups
+      tags:
+      - Group
+    post:
+      consumes:
+      - application/json
+      description: Create a new group
+      parameters:
+      - description: Group Data
+        in: body
+        name: group
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_group.GroupRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Create a new group
+      tags:
+      - Group
+  /groups/{id}:
+    delete:
+      description: Delete a group by ID
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Delete a group
+      tags:
+      - Group
+    get:
+      description: Get a single group by ID
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Get group by ID
+      tags:
+      - Group
+    put:
+      consumes:
+      - application/json
+      description: Update group by ID
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Group Data
+        in: body
+        name: group
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_dto_group.GroupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_utils.APIResponse'
+      summary: Update a group
+      tags:
+      - Group
+  /health:
+    get:
+      description: Check if server is running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health check
+      tags:
+      - health
+  /users:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_engrsakib_erp-system_internal_models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_engrsakib_erp-system_internal_models.User'
+      summary: Create user
+      tags:
+      - users
+swagger: "2.0"
