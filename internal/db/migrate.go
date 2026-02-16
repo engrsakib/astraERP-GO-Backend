@@ -20,6 +20,8 @@ func Migrate(db *gorm.DB) error {
 		&models.GroupType{},
 		&models.Group{},
 		&models.Member{},
+		&models.Geofence{},
+		&models.GeofencePoint{},
 	)
 
 	if err != nil {
