@@ -47,6 +47,12 @@ const (
     GeofenceUpdate PermissionSlug = "geofence.update"
     GeofenceDelete PermissionSlug = "geofence.delete"
     GeofenceView   PermissionSlug = "geofence.view"
+
+    // ➤ Geofence Point Management
+    GeofencePointCreate PermissionSlug = "geofence_point.create"
+    GeofencePointUpdate PermissionSlug = "geofence_point.update"
+    GeofencePointDelete PermissionSlug = "geofence_point.delete"
+    GeofencePointView   PermissionSlug = "geofence_point.view"
 )
 
 var AllPermissions = []struct {
@@ -97,4 +103,10 @@ var AllPermissions = []struct {
     {Name: "Update Geofence", Slug: GeofenceUpdate},
     {Name: "Delete Geofence", Slug: GeofenceDelete},
     {Name: "View Geofences", Slug: GeofenceView},
+
+    // Geofence Point
+    {Name: "Create Geofence Point", Slug: GeofencePointCreate},
+    {Name: "Update Geofence Point", Slug: GeofencePointUpdate},
+    {Name: "Delete Geofence Point", Slug: GeofencePointDelete},
+    {Name: "View Geofence Points", Slug: GeofencePointView},
 }
