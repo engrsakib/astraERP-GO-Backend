@@ -33,7 +33,7 @@ tmp/
 Thumbs.db
 
 # Swagger auto-generated docs
-internal/docs/*
+
 
 # Vendor (if not using go mod vendor)
 vendor/
